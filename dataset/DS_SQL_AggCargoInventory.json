@@ -1,0 +1,50 @@
+{
+	"name": "DS_SQL_AggCargoInventory",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQL_CargoDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CUST_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "CUST_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "OCEAN_AIR",
+				"type": "varchar"
+			},
+			{
+				"name": "FILES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LOTS",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PICES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUBES",
+				"type": "decimal",
+				"precision": 12,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "AggCargoInventory"
+		}
+	}
+}

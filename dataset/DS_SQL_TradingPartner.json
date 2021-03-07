@@ -1,0 +1,54 @@
+{
+	"name": "DS_SQL_TradingPartner",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQL_CargoDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUST_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "CUSTOMER_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "CUSTOMER_CONTACT",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDRESSS1",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDRESSS2",
+				"type": "varchar"
+			},
+			{
+				"name": "CITY",
+				"type": "varchar"
+			},
+			{
+				"name": "STATE",
+				"type": "varchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TblTradingPartner"
+		}
+	}
+}
