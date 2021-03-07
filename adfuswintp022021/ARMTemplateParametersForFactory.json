@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfuswintp022021"
+		},
+		"LS_AzureSQL_CargoDB_connectionString": {
+			"value": ""
+		},
+		"LS_AzureSQL_CargoSourceDB_connectionString": {
+			"value": ""
+		},
+		"LS_BlobStorageAcc_ipstorageaccount_connectionString": {
+			"value": ""
+		}
+	}
+}
