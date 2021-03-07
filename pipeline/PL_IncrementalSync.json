@@ -1,0 +1,164 @@
+{
+	"name": "PL_IncrementalSync",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "get_last_sync_dt",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "get_max_inserted_dt",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "Select CSD_CODE\n,FILE_NO\n,LOT_NO\n,OCEAN_AIR\n,CUST_CODE\n,STRIP_DATE\n,HOLD\n,DAD\n,RECEIVED_DATE\n,CONTAINER\n,PCS\n,POUNDS\n,CUBE\n,PICKUP_DATE\n,HOUSE_REF_NO\n,COMMODITY1\n,STATE\n,ZIP_CNTY\n,CONSIGNEE\n,STATUS\n,TRANSFER_YN\n,RELEASEFD_YN\nFrom [dbo].[TblClearedCargo]\nwhere INSERTED_TIMESTAMP >'@{activity('get_last_sync_dt').output.firstRow.LastSyncTimestamp}'  and INSERTED_TIMESTAMP<='@{activity('get_max_inserted_dt').output.firstRow.MaxInsetedTimestamp}'",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SQL_CargoSource",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_Cargo",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "get_last_sync_dt",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select LastSyncTimestamp,TableName from [dbo].[LogSyncTimestamp] where TableName='TblClearedCargo'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Cargo",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "get_max_inserted_dt",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select max(INSERTED_TIMESTAMP) MaxInsetedTimestamp from [dbo].[TblClearedCargo]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_CargoSource",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Stored procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[USP_UPDATE_SYNCTIMESTAMP]",
+					"storedProcedureParameters": {
+						"SyncTimeStamp": {
+							"value": {
+								"value": "@activity('get_max_inserted_dt').output.firstRow.MaxInsetedTimestamp",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"TableName": {
+							"value": {
+								"value": "@activity('get_last_sync_dt').output.firstRow.TableName",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQL_CargoDB",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-03-06T15:47:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

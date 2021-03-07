@@ -1,0 +1,22 @@
+{
+	"name": "DS_Blob_Target_Trips",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_BlobStorageAcc_ipstorageaccount",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "dispatchorders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

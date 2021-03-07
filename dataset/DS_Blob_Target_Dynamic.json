@@ -1,0 +1,35 @@
+{
+	"name": "DS_Blob_Target_Dynamic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_BlobStorageAcc_ipstorageaccount",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"dsprTargetFileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(dataset().dsprTargetFileName,formatDateTime(utcnow(),'_yyyy-MM-dd hh:mm:ss'))",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@formatDateTime(utcnow(),'yyyy-MM-dd')",
+					"type": "Expression"
+				},
+				"container": "dispatchorders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
