@@ -1,4 +1,12 @@
 {
 	"name": "adfuswintp022021",
+	"properties": {
+		"globalParameters": {
+			"dummyGlobalParam": {
+				"type": "string",
+				"value": "test"
+			}
+		}
+	},
 	"location": "westus"
 }
