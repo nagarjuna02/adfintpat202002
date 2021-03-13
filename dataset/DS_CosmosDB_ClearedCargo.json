@@ -1,5 +1,5 @@
 {
-	"name": "CosmosDbMongoDbApiCollection1",
+	"name": "DS_CosmosDB_ClearedCargo",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_CosmosDB_CargoDB",

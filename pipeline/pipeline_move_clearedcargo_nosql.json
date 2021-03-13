@@ -1,0 +1,113 @@
+{
+	"name": "pipeline_move_clearedcargo_nosql",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "CosmosDbMongoDbApiSink",
+						"writeBatchTimeout": "00:30:00",
+						"writeBehavior": "insert"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": ""
+								},
+								"sink": {
+									"path": "$"
+								}
+							},
+							{
+								"source": {
+									"name": "CSD_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['Station']"
+								}
+							},
+							{
+								"source": {
+									"name": "FILE_NO",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['FileNo']"
+								}
+							},
+							{
+								"source": {
+									"name": "LOT_NO",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['LotNo']"
+								}
+							},
+							{
+								"source": {
+									"name": "HOUSE_REF_NO",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['HBL']"
+								}
+							},
+							{
+								"source": {
+									"name": "COMMODITY1",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['Comm']"
+								}
+							},
+							{
+								"source": {
+									"name": "PCS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"path": "$['PCS']"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SQL_CargoSource",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_CosmosDB_ClearedCargo",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
