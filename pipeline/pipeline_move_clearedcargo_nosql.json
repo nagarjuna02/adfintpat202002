@@ -31,14 +31,6 @@
 						"mappings": [
 							{
 								"source": {
-									"name": ""
-								},
-								"sink": {
-									"path": "$"
-								}
-							},
-							{
-								"source": {
 									"name": "CSD_CODE",
 									"type": "String"
 								},
