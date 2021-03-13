@@ -1,1 +1,6 @@
-{}
+{
+	"dummyGlobalParam": {
+		"type": "string",
+		"value": "test"
+	}
+}

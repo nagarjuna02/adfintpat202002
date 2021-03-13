@@ -15,9 +15,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_AzureSQL_CargoSourceDB'"
 		},
+		"LS_AzureSQL_Parametrized_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_AzureSQL_Parametrized'"
+		},
 		"LS_BlobStorageAcc_ipstorageaccount_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_BlobStorageAcc_ipstorageaccount'"
+		},
+		"LS_CosmosDB_CargoDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_CosmosDB_CargoDB'"
+		},
+		"LS_CosmosDB_CargoDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "CargoDB"
 		},
 		"containerUri": {
 			"type": "string",
@@ -52,12 +64,41 @@
 					"LS_AzureSQL_CargoSourceDB_connectionString": {
 						"value": "[parameters('LS_AzureSQL_CargoSourceDB_connectionString')]"
 					},
+					"LS_AzureSQL_Parametrized_connectionString": {
+						"value": "[parameters('LS_AzureSQL_Parametrized_connectionString')]"
+					},
 					"LS_BlobStorageAcc_ipstorageaccount_connectionString": {
 						"value": "[parameters('LS_BlobStorageAcc_ipstorageaccount_connectionString')]"
+					},
+					"LS_CosmosDB_CargoDB_connectionString": {
+						"value": "[parameters('LS_CosmosDB_CargoDB_connectionString')]"
+					},
+					"LS_CosmosDB_CargoDB_properties_typeProperties_database": {
+						"value": "[parameters('LS_CosmosDB_CargoDB_properties_typeProperties_database')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "adfuswintp022021_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfuswintp022021_ArmTemplate_0')]"
+			]
 		}
 	]
 }

@@ -11,8 +11,17 @@
 		"LS_AzureSQL_CargoSourceDB_connectionString": {
 			"value": ""
 		},
+		"LS_AzureSQL_Parametrized_connectionString": {
+			"value": ""
+		},
 		"LS_BlobStorageAcc_ipstorageaccount_connectionString": {
 			"value": ""
+		},
+		"LS_CosmosDB_CargoDB_connectionString": {
+			"value": ""
+		},
+		"LS_CosmosDB_CargoDB_properties_typeProperties_database": {
+			"value": "CargoDB"
 		}
 	}
 }
