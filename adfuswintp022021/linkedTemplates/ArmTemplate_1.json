@@ -13,6 +13,188 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/pipeline_move_clearedcargo_nosql')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "CosmosDbMongoDbApiSink",
+								"writeBatchTimeout": "00:30:00",
+								"writeBehavior": "insert"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "CSD_CODE",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['Station']"
+										}
+									},
+									{
+										"source": {
+											"name": "FILE_NO",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['FileNo']"
+										}
+									},
+									{
+										"source": {
+											"name": "LOT_NO",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['LotNo']"
+										}
+									},
+									{
+										"source": {
+											"name": "HOUSE_REF_NO",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['HBL']"
+										}
+									},
+									{
+										"source": {
+											"name": "COMMODITY1",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['Comm']"
+										}
+									},
+									{
+										"source": {
+											"name": "PCS",
+											"type": "Decimal"
+										},
+										"sink": {
+											"path": "$['PCS']"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_SQL_CargoSource",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_CosmosDB_ClearedCargo",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline_movedispatchfiles')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Blob_Source_Trips",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Blob_Target_Trips",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": [],
+				"lastPublishTime": "2021-02-28T15:40:59Z"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pipeline_movedispatchfiles_dynamic')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -423,118 +605,37 @@
 							"name": "Aggregate1"
 						}
 					],
-					"script": "source(output(\n\t\tCSD_CODE as string,\n\t\tFILE_NO as string,\n\t\tLOT_NO as string,\n\t\tOCEAN_AIR as string,\n\t\tCUST_CODE as string,\n\t\tSTRIP_DATE as date,\n\t\tHOLD as string,\n\t\tDAD as string,\n\t\tRECEIVED_DATE as date,\n\t\tCONTAINER as string,\n\t\tPCS as decimal(12,3),\n\t\tPOUNDS as decimal(12,3),\n\t\tCUBE as decimal(12,3),\n\t\tPICKUP_DATE as date,\n\t\tHOUSE_REF_NO as string,\n\t\tCOMMODITY1 as string,\n\t\tSTATE as string,\n\t\tZIP_CNTY as string,\n\t\tCONSIGNEE as string,\n\t\tSTATUS as string,\n\t\tTRANSFER_YN as string,\n\t\tRELEASEFD_YN as string,\n\t\tINSERTED_TIMESTAMP as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> ClearedCargo\nsource(output(\n\t\tID as integer,\n\t\tCUST_CODE as string,\n\t\tCUSTOMER_NAME as string,\n\t\tCUSTOMER_CONTACT as string,\n\t\tADDRESSS1 as string,\n\t\tADDRESSS2 as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tZIP as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> TradingPartner\nClearedCargo select(mapColumn(\n\t\tFILE_NO,\n\t\tLOT_NO,\n\t\tOCEAN_AIR,\n\t\tCUST_CODE,\n\t\tPCS,\n\t\tPOUNDS\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectClearedCargo\nTradingPartner select(mapColumn(\n\t\tCUST_CODE,\n\t\tCUSTOMER_NAME\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectCustomer\nSelectClearedCargo, SelectCustomer join(SelectClearedCargo@CUST_CODE == SelectCustomer@CUST_CODE,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 aggregate(groupBy(SelectCustomer@CUST_CODE,\n\t\tCUSTOMER_NAME,\n\t\tOCEAN_AIR),\n\tFILE_NO = countDistinct(FILE_NO),\n\t\tLOT_NO = count(LOT_NO),\n\t\tPICES = sum(PCS),\n\t\tPOUNDS = sum(POUNDS)) ~> Aggregate1\nAggregate1 sink(input(\n\t\tCUST_CODE as string,\n\t\tCUST_NAME as string,\n\t\tOCEAN_AIR as string,\n\t\tFILES as integer,\n\t\tLOTS as integer,\n\t\tPICES as integer,\n\t\tCUBES as decimal(12,3)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tCUST_CODE,\n\t\tCUST_NAME = CUSTOMER_NAME,\n\t\tOCEAN_AIR,\n\t\tFILES = FILE_NO,\n\t\tLOTS = LOT_NO,\n\t\tPICES,\n\t\tCUBES = POUNDS\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
+					"script": "source(output(\n\t\tCSD_CODE as string,\n\t\tFILE_NO as string,\n\t\tLOT_NO as string,\n\t\tOCEAN_AIR as string,\n\t\tCUST_CODE as string,\n\t\tSTRIP_DATE as date,\n\t\tHOLD as string,\n\t\tDAD as string,\n\t\tRECEIVED_DATE as date,\n\t\tCONTAINER as string,\n\t\tPCS as decimal(12,3),\n\t\tPOUNDS as decimal(12,3),\n\t\tCUBE as decimal(12,3),\n\t\tPICKUP_DATE as date,\n\t\tHOUSE_REF_NO as string,\n\t\tCOMMODITY1 as string,\n\t\tSTATE as string,\n\t\tZIP_CNTY as string,\n\t\tCONSIGNEE as string,\n\t\tSTATUS as string,\n\t\tTRANSFER_YN as string,\n\t\tRELEASEFD_YN as string,\n\t\tINSERTED_TIMESTAMP as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> ClearedCargo\nsource(output(\n\t\tID as integer,\n\t\tCUST_CODE as string,\n\t\tCUSTOMER_NAME as string,\n\t\tCUSTOMER_CONTACT as string,\n\t\tADDRESSS1 as string,\n\t\tADDRESSS2 as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tZIP as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> TradingPartner\nClearedCargo select(mapColumn(\n\t\tFILE_NO,\n\t\tLOT_NO,\n\t\tOCEAN_AIR,\n\t\tCUST_CODE,\n\t\tPCS,\n\t\tPOUNDS\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectClearedCargo\nTradingPartner select(mapColumn(\n\t\tCUST_CODE,\n\t\tCUSTOMER_NAME\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectCustomer\nSelectClearedCargo, SelectCustomer join(SelectClearedCargo@CUST_CODE == SelectCustomer@CUST_CODE,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 aggregate(groupBy(SelectCustomer@CUST_CODE,\n\t\tCUSTOMER_NAME,\n\t\tOCEAN_AIR),\n\tFILE_NO = countDistinct(FILE_NO),\n\t\tLOT_NO = count(LOT_NO),\n\t\tPICES = sum(PCS),\n\t\tPOUNDS = sum(POUNDS)) ~> Aggregate1\nAggregate1 sink(input(\n\t\tCUST_CODE as string,\n\t\tCUST_NAME as string,\n\t\tOCEAN_AIR as string,\n\t\tFILES as integer,\n\t\tLOTS as integer,\n\t\tPICES as integer,\n\t\tCUBES as decimal(12,3)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tCUST_CODE,\n\t\tCUST_NAME = CUSTOMER_NAME,\n\t\tOCEAN_AIR,\n\t\tFILES = FILE_NO,\n\t\tLOTS = LOT_NO,\n\t\tPICES,\n\t\tCUBES = POUNDS\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
 				}
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline_move_clearedcargo_nosql')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
 					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
+						"pipelineReference": {
+							"referenceName": "pipeline1",
+							"type": "PipelineReference"
 						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "CosmosDbMongoDbApiSink",
-								"writeBatchTimeout": "00:30:00",
-								"writeBehavior": "insert"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "CSD_CODE",
-											"type": "String"
-										},
-										"sink": {
-											"path": "$['Station']"
-										}
-									},
-									{
-										"source": {
-											"name": "FILE_NO",
-											"type": "String"
-										},
-										"sink": {
-											"path": "$['FileNo']"
-										}
-									},
-									{
-										"source": {
-											"name": "LOT_NO",
-											"type": "String"
-										},
-										"sink": {
-											"path": "$['LotNo']"
-										}
-									},
-									{
-										"source": {
-											"name": "HOUSE_REF_NO",
-											"type": "String"
-										},
-										"sink": {
-											"path": "$['HBL']"
-										}
-									},
-									{
-										"source": {
-											"name": "COMMODITY1",
-											"type": "String"
-										},
-										"sink": {
-											"path": "$['Comm']"
-										}
-									},
-									{
-										"source": {
-											"name": "PCS",
-											"type": "Decimal"
-										},
-										"sink": {
-											"path": "$['PCS']"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_SQL_CargoSource",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_CosmosDB_ClearedCargo",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"parameters": {}
 					}
 				],
-				"annotations": []
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 2,
+						"startTime": "2021-03-27T09:55:00Z",
+						"endTime": "2021-03-28T09:55:00Z",
+						"timeZone": "UTC"
+					}
+				}
 			},
 			"dependsOn": []
 		},
