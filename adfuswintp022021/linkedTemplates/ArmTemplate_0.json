@@ -125,7 +125,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Stored procedure1",
+						"name": "Stored procedure11",
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [],
 						"policy": {
